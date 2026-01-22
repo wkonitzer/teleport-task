@@ -1,15 +1,24 @@
 # Kubernetes Local Cluster Design and Security Architecture
 
-## Overview
+## Overview and Demonstration Goals
 
-This document describes the design decisions, architectural principles, and implementation details behind a locally deployed Kubernetes cluster intended to closely mirror real-world, production-grade patterns while remaining suitable for development and evaluation.
+This solution demonstrates how a production-aligned Kubernetes cluster can be securely operated using Kubernetes-native primitives while remaining suitable for local development and evaluation.
 
-The primary goals of this design were:
-- Stability and predictability
+The cluster is intentionally built using:
+- A real Kubernetes control plane (kubeadm)
+- Certificate-based user authentication
+- Least-privilege, namespace-scoped RBAC
+- Application deployment by a non-admin user using Helm
+- Standard ingress, service, and TLS patterns
+
+The primary goal of the demonstration is to show that a non-privileged user can deploy and manage an application without cluster-admin access, while still using realistic tooling and workflows. The focus is deliberately placed on **security boundaries, operational correctness, and architectural clarity**, rather than application complexity.
+
+The design emphasizes:
+- Stability and predictable behavior
 - Production-aligned architecture
 - Strong security posture through least privilege
 - Clear separation of concerns between cluster administration and application deployment
-- Explicit, explainable trade-offs rather than hidden abstractions
+- Explicit, explainable trade-offs over hidden abstractions or convenience tooling
 
 ---
 
@@ -29,7 +38,26 @@ are intentionally documented separately in the **README** at the top level of th
 
 Together, the two documents provide both architectural context and operational detail.
 
---
+---
+
+## Limitations and Trade-offs of the User and Cluster Management Model
+
+While certificate-based authentication and manual RBAC provide strong security guarantees, this approach has several limitations:
+
+- **Operational overhead**: Managing client certificates, CSRs, and kubeconfigs does not scale well for large teams.
+- **Certificate lifecycle management**: Certificates must be rotated, revoked, and redistributed manually unless integrated with external identity systems.
+- **Limited audit context**: Native certificate auth lacks rich identity metadata compared to OIDC-based providers.
+- **Not ideal for dynamic environments**: Short-lived users, contractors, or ephemeral access are harder to manage.
+- **Local cluster constraints**: kubeadm-based clusters require more hands-on maintenance compared to managed Kubernetes services.
+
+In production environments, these issues are typically addressed by integrating Kubernetes with:
+- OIDC identity providers
+- Centralized IAM systems
+- Automated certificate and access lifecycle tooling
+
+For this exercise, the simpler model was chosen intentionally to demonstrate Kubernetes-native security primitives without external dependencies.
+
+---
 
 ## Virtualization Platform Selection
 
@@ -345,7 +373,20 @@ Validation was performed before application deployment to ensure a stable baseli
 
 ---
 
+## Feature Scope and Level-Appropriate Choices
+
+For the scope and level of this implementation, the following deliberate choices were made:
+
+- **Focused feature set**: Emphasis on secure user access and deployment rather than application complexity.
+- **Helm over GitOps**: Demonstrates realistic workflows without introducing additional controllers or cluster-wide permissions.
+- **Single application**: NGINX was chosen to keep attention on access control and deployment mechanics.
+- **Namespace-scoped RBAC**: Aligns with real multi-tenant patterns while remaining understandable.
+- **Internal TLS issuer**: Avoids external dependencies while still demonstrating certificate automation.
+
+These choices balance realism with clarity, ensuring the core concepts are demonstrated cleanly and can be evaluated without unnecessary complexity.
+
+---
+
 ## Summary
 
 This design intentionally favors correctness, clarity, and security over shortcuts. While the environment is local, the architecture mirrors real-world Kubernetes deployments, making it suitable for demonstrations, evaluations, and security-focused discussions.
-
