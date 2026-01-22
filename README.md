@@ -228,7 +228,7 @@ Wait until all pods are "Ready" before continuing.
 
 ```bash
 kubectl apply -f metallb/ip_address_pool.yaml
-kubectl apply -f metallb/l2-advertisement.yaml
+kubectl apply -f metallb/l2_advertisement.yaml
 ```
 
 ---
