@@ -19,7 +19,7 @@ CA_CERT=$(kubectl config view --raw --minify -o jsonpath='{.clusters[0].cluster.
 kubectl create namespace $NAMESPACE --dry-run=client -o yaml | kubectl apply -f -
 
 # ----------------------------
-# 2. Generate key and certificate signing request
+# 3. Generate key and certificate signing request
 # ----------------------------
 openssl genrsa -out ${USER}.key 2048
 
@@ -41,14 +41,14 @@ spec:
 EOF
 
 # ----------------------------
-# 3. Approve signing request
+# 4. Approve signing request
 # In production, CSR approval would typically be performed
 # by a cluster admin or automated policy controller
 # ----------------------------
 kubectl certificate approve ${USER}
 
 # ----------------------------
-# 4. Download certificates
+# 5. Download certificates
 # ----------------------------
 kubectl get csr ${USER} \
   -o jsonpath='{.status.certificate}' \
@@ -57,7 +57,7 @@ kubectl get csr ${USER} \
 echo $CA_CERT |base64 --decode > ca.crt  
 
 # ----------------------------
-# 5. Create User Role and Bindings
+# 6. Create User Role and Bindings
 # ----------------------------
 cat <<EOF | kubectl apply -f -
 apiVersion: rbac.authorization.k8s.io/v1
@@ -121,7 +121,7 @@ roleRef:
 EOF
 
 # ----------------------------
-# 6. Create Kubeconfig file
+# 7. Create Kubeconfig file
 # ----------------------------
 kubectl config --kubeconfig=${USER}.kubeconfig set-cluster ${CLUSTER_NAME} \
   --server=${API_SERVER} \
