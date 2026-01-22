@@ -90,6 +90,7 @@ kubectl get pods -n kube-system
 ```
 
 Wait until all pods are "Running" before continuing.
+
 ---
 
 ## 8. Join Worker Nodes
