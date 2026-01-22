@@ -390,3 +390,5 @@ These choices balance realism with clarity, ensuring the core concepts are demon
 ## Summary
 
 This design intentionally favors correctness, clarity, and security over shortcuts. While the environment is local, the architecture mirrors real-world Kubernetes deployments, making it suitable for demonstrations, evaluations, and security-focused discussions.
+
+This model also highlights why managing access, identity, and lifecycle at scale becomes challenging, and why centralized access platforms are commonly introduced in production environments.
