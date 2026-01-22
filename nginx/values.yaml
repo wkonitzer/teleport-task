@@ -1,0 +1,38 @@
+replicaCount: 1
+
+image:
+  repository: nginx
+  tag: stable
+  pullPolicy: IfNotPresent
+
+service:
+  enabled: true
+  type: ClusterIP
+  port: 80
+
+html: |
+  <!DOCTYPE html>
+  <html>
+  <head>
+    <title>NGINX on Kubernetes</title>
+  </head>
+  <body>
+    <h1>Hello from NGINX</h1>
+    <p>Deployed by a non-admin Kubernetes user.</p>
+  </body>
+  </html>
+
+ingress:
+  enabled: true
+  className: nginx
+  host: nginx.local
+  tls:
+    enabled: true
+    secretName: nginx-tls
+  certManager:
+    enabled: true
+    # Internal CA used for private, non-public cluster  
+    issuerRef:
+      kind: cluster-issuer   # or issuer
+      name: internal-ca
+  
