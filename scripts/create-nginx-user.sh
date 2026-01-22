@@ -16,7 +16,7 @@ CA_CERT=$(kubectl config view --raw --minify -o jsonpath='{.clusters[0].cluster.
 # ----------------------------
 # 2. Create namespace
 # ----------------------------
-kubectl create namespace $NAMESPACE
+kubectl create namespace $NAMESPACE --dry-run=client -o yaml | kubectl apply -f -
 
 # ----------------------------
 # 2. Generate key and certificate signing request
