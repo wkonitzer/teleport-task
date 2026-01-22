@@ -4,6 +4,11 @@ set -euo pipefail
 # One downside of client-cert auth is lifecycle management — expiration and 
 # rotation are manual unless you automate it.
 
+# This script is intentionally not idempotent.
+# User creation and certificate issuance are treated as explicit,
+# security-sensitive operations rather than repeatable automation.
+
+
 # ----------------------------
 # 1. Create variables
 # ----------------------------
