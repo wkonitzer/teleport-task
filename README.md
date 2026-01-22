@@ -244,13 +244,13 @@ echo "192.168.99.2 nginx.local" | sudo tee -a /etc/hosts > /dev/null
 ## 19. Create NGINX User
 
 ```bash
-sudo bash scripts/create-nginx-user.sh
+bash scripts/create-nginx-user.sh
 ```
 
 Verify:
 
 ```bash
-kubectl get pods -n kube-system --kubeconfig nginx-user.kubeconfig
+kubectl get pods -n kube-system --kubeconfig nginx-user.kubeconfig  # command should fail
 kubectl get pods -n nginx-demo --kubeconfig nginx-user.kubeconfig
 ```
 
