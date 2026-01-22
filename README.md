@@ -113,6 +113,8 @@ Verify:
 kubectl get nodes
 ```
 
+Wait until all pods are "Ready" before continuing.
+
 ---
 
 ## 9. Install Helm
