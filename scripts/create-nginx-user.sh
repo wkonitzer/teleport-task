@@ -1,15 +1,26 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# One downside of client-cert auth is lifecycle management — expiration and 
+# rotation are manual unless you automate it.
+
+# ----------------------------
+# 1. Create variables
+# ----------------------------
 USER=nginx-user
 NAMESPACE=nginx-demo
 CLUSTER_NAME=$(kubectl config view --minify -o jsonpath='{.clusters[0].name}')
 API_SERVER=$(kubectl config view --minify -o jsonpath='{.clusters[0].cluster.server}')
 CA_CERT=$(kubectl config view --raw --minify -o jsonpath='{.clusters[0].cluster.certificate-authority-data}')
 
-
+# ----------------------------
+# 2. Create namespace
+# ----------------------------
 kubectl create namespace $NAMESPACE
 
+# ----------------------------
+# 2. Generate key and certificate signing request
+# ----------------------------
 openssl genrsa -out ${USER}.key 2048
 
 openssl req -new \
@@ -29,14 +40,25 @@ spec:
   - client auth
 EOF
 
+# ----------------------------
+# 3. Approve signing request
+# In production, CSR approval would typically be performed
+# by a cluster admin or automated policy controller
+# ----------------------------
 kubectl certificate approve ${USER}
 
+# ----------------------------
+# 4. Download certificates
+# ----------------------------
 kubectl get csr ${USER} \
   -o jsonpath='{.status.certificate}' \
   | base64 --decode > ${USER}.crt
 
 echo $CA_CERT |base64 --decode > ca.crt  
 
+# ----------------------------
+# 5. Create User Role and Bindings
+# ----------------------------
 cat <<EOF | kubectl apply -f -
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
@@ -98,6 +120,9 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
 EOF
 
+# ----------------------------
+# 6. Create Kubeconfig file
+# ----------------------------
 kubectl config --kubeconfig=${USER}.kubeconfig set-cluster ${CLUSTER_NAME} \
   --server=${API_SERVER} \
   --certificate-authority=ca.crt
