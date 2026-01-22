@@ -214,6 +214,18 @@ helm repo add metallb https://metallb.github.io/metallb
 helm install metallb metallb/metallb --namespace metallb-system --create-namespace
 ```
 
+Verify:
+
+```bash
+kubectl get pods -n metallb-system
+```
+
+Wait until all pods are "Ready" before continuing.
+
+---
+
+## 17. Configure MetalLB
+
 ```bash
 kubectl apply -f metallb/ip_address_pool.yaml
 kubectl apply -f metallb/l2-advertisement.yaml
@@ -221,7 +233,7 @@ kubectl apply -f metallb/l2-advertisement.yaml
 
 ---
 
-## 17. Add Hosts Entry
+## 18. Add Hosts Entry
 
 ```bash
 echo "192.168.99.2 nginx.local" | sudo tee -a /etc/hosts > /dev/null
@@ -229,7 +241,7 @@ echo "192.168.99.2 nginx.local" | sudo tee -a /etc/hosts > /dev/null
 
 ---
 
-## 18. Create NGINX User
+## 19. Create NGINX User
 
 ```bash
 sudo bash scripts/create-nginx-user.sh
@@ -244,7 +256,7 @@ kubectl get pods -n nginx-demo --kubeconfig nginx-user.kubeconfig
 
 ---
 
-## 19. Deploy NGINX App
+## 20. Deploy NGINX App
 
 ```bash
 helm install nginx ./nginx   --namespace nginx-demo   --kubeconfig nginx-user.kubeconfig
@@ -252,7 +264,7 @@ helm install nginx ./nginx   --namespace nginx-demo   --kubeconfig nginx-user.ku
 
 ---
 
-## 20. Verify
+## 21. Verify
 
 ```bash
 kubectl get pods -n nginx-demo --kubeconfig nginx-user.kubeconfig
