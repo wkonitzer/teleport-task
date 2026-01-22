@@ -259,7 +259,7 @@ kubectl get pods -n nginx-demo --kubeconfig nginx-user.kubeconfig
 ## 20. Deploy NGINX App
 
 ```bash
-helm install nginx ./nginx   --namespace nginx-demo   --kubeconfig nginx-user.kubeconfig
+helm install nginx ./nginx --namespace nginx-demo --kubeconfig nginx-user.kubeconfig
 ```
 
 ---
@@ -268,7 +268,6 @@ helm install nginx ./nginx   --namespace nginx-demo   --kubeconfig nginx-user.ku
 
 ```bash
 kubectl get pods -n nginx-demo --kubeconfig nginx-user.kubeconfig
-kubectl get certificate --kubeconfig nginx-user.kubeconfig
 curl -L nginx.local
 ```
 
