@@ -78,7 +78,7 @@ apt-mark hold kubelet kubeadm kubectl
 systemctl enable kubelet
 
 # ----------------------------
-# 5. Final checks
+# 5. Final software checks
 # ----------------------------
 echo "===> Verifying installation"
 
@@ -86,7 +86,9 @@ kubeadm version
 kubelet --version
 kubectl version --client
 
-## Fix config
+# ----------------------------
+# 6. Fix containerd config
+# ----------------------------
 sudo tee /etc/crictl.yaml >/dev/null <<'EOF'
 runtime-endpoint: unix:///run/containerd/containerd.sock
 image-endpoint: unix:///run/containerd/containerd.sock
@@ -99,9 +101,15 @@ sudo sed -i 's/SystemdCgroup = false/SystemdCgroup = true/' /etc/containerd/conf
 sudo sed -i '/^KUBELET_EXTRA_ARGS=/d' /etc/default/kubelet
 echo 'KUBELET_EXTRA_ARGS=--container-runtime-endpoint=unix:///run/containerd/containerd.sock' | sudo tee -a /etc/default/kubelet
 
+# ----------------------------
+# 7. Turn swapoff
+# ----------------------------
 sudo swapoff -a
 sudo sed -i.bak 's|^/swap.img|#/swap.img|' /etc/fstab
 
+# ----------------------------
+# 8. Fix hostname
+# ----------------------------
 NEW_HOST="node-$(openssl rand -hex 3)"
 sudo hostnamectl set-hostname "$NEW_HOST"
 sudo sed -i "s/^127\.0\.1\.1.*/127.0.1.1 $NEW_HOST/" /etc/hosts
